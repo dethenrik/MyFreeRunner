@@ -6,11 +6,10 @@ public class WallRun : MonoBehaviour
     private PlayerController playerController;
 
     public float wallRunSpeed = 6f;
-    public float jumpOffWallForce = 8f;
+    public float jumpOffWallForce = 10f;  // Øget for et kraftigere skub
+    public float pushOffForce = 5f;       // Kraft til at skubbe væk fra væggen
     private bool isWallRunning = false;
     private Vector3 wallNormal;
-
-    private bool wallRunCooldown = false;  // Til forsinkelse efter hop
 
     void Start()
     {
@@ -24,7 +23,7 @@ public class WallRun : MonoBehaviour
         {
             Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             move = Camera.main.transform.TransformDirection(move);
-            move = Vector3.ProjectOnPlane(move, wallNormal);  // Bevægelse parallelt med væggen
+            move = Vector3.ProjectOnPlane(move, wallNormal);
 
             controller.Move(move * Time.deltaTime * wallRunSpeed);
 
@@ -39,20 +38,13 @@ public class WallRun : MonoBehaviour
         {
             JumpOffWall();
         }
-
-        // Nulstil wall run cooldown, når spilleren rammer jorden
-        if (controller.isGrounded && wallRunCooldown)
-        {
-            wallRunCooldown = false;
-            Debug.Log("Wall Run Cooldown Reset");
-        }
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (!controller.isGrounded && hit.normal.y < 0.1f && !wallRunCooldown)
+        if (!controller.isGrounded && hit.normal.y < 0.1f && hit.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            Debug.Log("Wall Detected!");
+            Debug.Log("Wall Detected on Wall Layer!");
             wallNormal = hit.normal;
             StartWallRun();
         }
@@ -63,7 +55,7 @@ public class WallRun : MonoBehaviour
         if (!isWallRunning)
         {
             isWallRunning = true;
-            playerController.enabled = false;  // Deaktiver standard controller
+            playerController.enabled = false;
             Debug.Log("Wall Run Started");
         }
     }
@@ -71,12 +63,17 @@ public class WallRun : MonoBehaviour
     void JumpOffWall()
     {
         isWallRunning = false;
-        playerController.enabled = true;  // Genaktiver standard controller
-        Vector3 jumpDirection = wallNormal + Vector3.up;
-        controller.Move(jumpDirection * jumpOffWallForce * Time.deltaTime);
-        wallRunCooldown = true;  // Start cooldown efter hop
-        Debug.Log("Jumped Off Wall! Cooldown Activated");
+        playerController.enabled = true;
+
+        // Brug væggens normale og spillerens retning til at skubbe væk
+        Vector3 awayFromWall = wallNormal * pushOffForce;  // Skub væk fra væggen
+        Vector3 upwards = Vector3.up * jumpOffWallForce;    // Hop opad
+        Vector3 finalJump = awayFromWall + upwards;
+
+        controller.Move(finalJump * Time.deltaTime);
+        Debug.Log("Jumped Off Wall away from Wall!");
     }
+
 
     void StopWallRun()
     {
@@ -90,8 +87,11 @@ public class WallRun : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -wallNormal, out hit, 1f))
         {
-            return true;  // Der er stadig væg
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
+            {
+                return true;
+            }
         }
-        return false;  // Ingen væg fundet
+        return false;
     }
 }

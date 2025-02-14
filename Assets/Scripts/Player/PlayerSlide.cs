@@ -17,11 +17,12 @@ public class PlayerSlide : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && controller.isGrounded && playerController.speed > 0.1f && !isSliding)
+        if (Input.GetKeyDown(KeyCode.C) && controller.isGrounded && playerController.speed > 0.1f && !isSliding)
         {
             StartCoroutine(Slide());
         }
     }
+
 
     private System.Collections.IEnumerator Slide()
     {
@@ -31,11 +32,14 @@ public class PlayerSlide : MonoBehaviour
         controller.height = originalHeight / 2;  // Sænker karakterens højde
 
         float slideTime = 0f;
-        Vector3 slideDirection = transform.forward;
+
+        // Brug kameraets retning
+        Vector3 slideDirection = Camera.main.transform.forward;
+        slideDirection.y = 0;  // Fjern vertikal komponent
 
         while (slideTime < slideDuration)
         {
-            controller.Move(slideDirection * slideSpeed * Time.deltaTime);
+            controller.Move(slideDirection.normalized * slideSpeed * Time.deltaTime);
             slideTime += Time.deltaTime;
             yield return null;
         }
