@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Bane1.unity
     guid: fd7da2021fdbbf942bb028aa710fa8f5
+  - enabled: 1
+    path: "Assets/Scenes/BaneV\xE6lger.unity"
+    guid: 4f2d21a6efd0c0e4793f9e3430e05d8e
+  - enabled: 1
+    path: Assets/Scenes/Indstillinger.unity
+    guid: ab224a20f38413844842f75c23e2e058
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

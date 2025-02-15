@@ -5,14 +5,18 @@ public class PlayerSlide : MonoBehaviour
     private CharacterController controller;
     private PlayerController playerController;
 
-    public float slideSpeed = 8.0f;
-    public float slideDuration = 0.8f;
+    public float slideSpeed;
+    public float slideDuration;
     private bool isSliding = false;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         playerController = GetComponent<PlayerController>();
+
+        // Hent værdier fra PlayerPrefs
+        slideSpeed = PlayerPrefs.GetFloat("SlideSpeed", 5.0f);
+        slideDuration = PlayerPrefs.GetFloat("SlideDuration", 5.0f);
     }
 
     void Update()
@@ -23,19 +27,16 @@ public class PlayerSlide : MonoBehaviour
         }
     }
 
-
     private System.Collections.IEnumerator Slide()
     {
         isSliding = true;
 
         float originalHeight = controller.height;
-        controller.height = originalHeight / 2;  // Sænker karakterens højde
+        controller.height = originalHeight / 2;
 
         float slideTime = 0f;
-
-        // Brug kameraets retning
         Vector3 slideDirection = Camera.main.transform.forward;
-        slideDirection.y = 0;  // Fjern vertikal komponent
+        slideDirection.y = 0;
 
         while (slideTime < slideDuration)
         {
@@ -44,7 +45,7 @@ public class PlayerSlide : MonoBehaviour
             yield return null;
         }
 
-        controller.height = originalHeight;  // Gendanner karakterens højde
+        controller.height = originalHeight;
         isSliding = false;
     }
 }

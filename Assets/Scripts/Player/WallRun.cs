@@ -5,9 +5,9 @@ public class WallRun : MonoBehaviour
     private CharacterController controller;
     private PlayerController playerController;
 
-    public float wallRunSpeed = 6f;
-    public float jumpOffWallForce = 10f;  // Øget for et kraftigere skub
-    public float pushOffForce = 5f;       // Kraft til at skubbe væk fra væggen
+    public float wallRunSpeed;
+    public float jumpOffWallForce;
+    public float pushOffForce;
     private bool isWallRunning = false;
     private Vector3 wallNormal;
 
@@ -15,6 +15,11 @@ public class WallRun : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerController = GetComponent<PlayerController>();
+
+        // Hent værdier fra PlayerPrefs
+        wallRunSpeed = PlayerPrefs.GetFloat("WallRunSpeed", 5.0f);
+        jumpOffWallForce = PlayerPrefs.GetFloat("JumpOffWallForce", 5.0f);
+        pushOffForce = PlayerPrefs.GetFloat("PushOffForce", 5.0f);
     }
 
     void Update()
@@ -65,15 +70,13 @@ public class WallRun : MonoBehaviour
         isWallRunning = false;
         playerController.enabled = true;
 
-        // Brug væggens normale og spillerens retning til at skubbe væk
-        Vector3 awayFromWall = wallNormal * pushOffForce;  // Skub væk fra væggen
-        Vector3 upwards = Vector3.up * jumpOffWallForce;    // Hop opad
+        Vector3 awayFromWall = wallNormal * pushOffForce;
+        Vector3 upwards = Vector3.up * jumpOffWallForce;
         Vector3 finalJump = awayFromWall + upwards;
 
         controller.Move(finalJump * Time.deltaTime);
-        Debug.Log("Jumped Off Wall away from Wall!");
+        Debug.Log("Jumped Off Wall!");
     }
-
 
     void StopWallRun()
     {
