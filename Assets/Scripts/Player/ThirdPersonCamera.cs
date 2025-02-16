@@ -14,6 +14,8 @@ public class ThirdPersonCamera : MonoBehaviour
     public float minDistance = 1.0f;
     public float maxDistance = 5.0f;
 
+    private bool isPaused = false; // Spilstatus
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -22,8 +24,9 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Update()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Stop kameraets bevægelse, når spillet er pauset
+        if (Time.timeScale == 0f)
+            return;
 
         currentX += Input.GetAxis("Mouse X") * sensitivityX;
         currentY -= Input.GetAxis("Mouse Y") * sensitivityY;
@@ -32,6 +35,10 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        // Stop kameraets bevægelse, når spillet er pauset
+        if (Time.timeScale == 0f)
+            return;
+
         Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
         Vector3 desiredPosition = player.position + rotation * offset;
 

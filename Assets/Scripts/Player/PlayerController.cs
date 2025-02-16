@@ -6,18 +6,25 @@ public class PlayerController : MonoBehaviour
     public Vector3 playerVelocity;
 
     private bool isGrounded;
-    public float speed;
-    public float jumpHeight;
-    public float gravity;
+    public float speed = 5.0f;
+    public float jumpHeight = 1.5f;
+    public float gravity = -9.81f;
 
-    void Start()
+void Start()
+{
+    controller = GetComponent<CharacterController>();
+
+    speed = PlayerPrefs.GetFloat("Speed", 5.0f);
+    jumpHeight = PlayerPrefs.GetFloat("JumpHeight", 1.5f);
+    gravity = PlayerPrefs.GetFloat("Gravity", -9.81f);
+}
+
+    void Update()
     {
-        controller = GetComponent<CharacterController>();
-
-        // Hent værdier fra PlayerPrefs
-        speed = PlayerPrefs.GetFloat("Speed", 5.0f);
-        jumpHeight = PlayerPrefs.GetFloat("JumpHeight", 5.0f);
-        gravity = PlayerPrefs.GetFloat("Gravity", -9.81f);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space pressed at: " + Time.time);
+        }
     }
 
     void FixedUpdate()
